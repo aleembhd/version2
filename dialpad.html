@@ -377,17 +377,21 @@
             });
         });
 
-        // Single click delete functionality
-        deleteButton.addEventListener('click', deleteLastDigit);
+        if (deleteButton) {
+            // Single click delete functionality
+            deleteButton.addEventListener('click', deleteLastDigit);
 
-        // Long press delete functionality
+            // Long press delete functionality
+            deleteButton.addEventListener('mousedown', startDelete);
+            deleteButton.addEventListener('touchstart', startDelete);
+            deleteButton.addEventListener('mouseup', stopDelete);
+            deleteButton.addEventListener('mouseleave', stopDelete);
+            deleteButton.addEventListener('touchend', stopDelete);
+        } else {
+            console.error('Delete button not found in the DOM');
+        }
+
         let deleteInterval;
-
-        deleteButton.addEventListener('mousedown', startDelete);
-        deleteButton.addEventListener('touchstart', startDelete);
-        deleteButton.addEventListener('mouseup', stopDelete);
-        deleteButton.addEventListener('mouseleave', stopDelete);
-        deleteButton.addEventListener('touchend', stopDelete);
 
         function startDelete(e) {
             e.preventDefault(); // Prevent default touch behavior
@@ -540,31 +544,14 @@
             return `${formattedHours}:${minutes}${ampm}`;
         }
 
-        function handleCall() {
-            const numberInput = document.getElementById('numberInput');
-            const number = numberInput.value.trim();
-            if (number) {
-                const formattedNumber = '+91' + number.replace(/\D/g, '');
-                window.location.href = `tel:${formattedNumber}`;
-            }
-        }
-
+        // Remove or comment out these functions
+        /*
+        function handleCall() { ... }
         document.getElementById('callBtn').addEventListener('click', handleCall);
-
-        function addNumber(num) {
-            const numberInput = document.getElementById('numberInput');
-            numberInput.value += num;
-        }
-
-        function clearNumber() {
-            const numberInput = document.getElementById('numberInput');
-            numberInput.value = '';
-        }
-
-        function deleteLastDigit() {
-            const numberInput = document.getElementById('numberInput');
-            numberInput.value = numberInput.value.slice(0, -1);
-        }
+        function addNumber(num) { ... }
+        function clearNumber() { ... }
+        function deleteLastDigit() { ... }
+        */
     </script>
 </body>
 </html>
