@@ -74,32 +74,17 @@
             transition: all 0.1s ease;
             overflow: hidden;
             position: relative;
-        }
-
-        .key::after {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 100%;
-            height: 100%;
-            background: rgba(255, 255, 255, 0.3);
-            border-radius: 50%;
-            transform: translate(-50%, -50%) scale(0);
-            transition: transform 0.3s ease-out;
-        }
-
-        .key:active::after {
-            transform: translate(-50%, -50%) scale(2);
-            opacity: 0;
-        }
-
-        .key:hover {
-            background-color: var(--hover-color);
+            -webkit-tap-highlight-color: transparent; /* Remove blue highlight on mobile */
         }
 
         .key:active {
+            background-color: var(--hover-color);
             transform: scale(0.95);
+        }
+
+        /* Remove the ::after pseudo-element */
+        .key::after {
+            display: none;
         }
 
         .call-button {
@@ -392,17 +377,34 @@
             });
         });
 
-        deleteButton.addEventListener('click', () => {
+        let deleteInterval;
+
+        deleteButton.addEventListener('mousedown', startDelete);
+        deleteButton.addEventListener('touchstart', startDelete);
+        deleteButton.addEventListener('mouseup', stopDelete);
+        deleteButton.addEventListener('mouseleave', stopDelete);
+        deleteButton.addEventListener('touchend', stopDelete);
+
+        function startDelete(e) {
+            e.preventDefault(); // Prevent default touch behavior
+            deleteLastDigit();
+            deleteInterval = setInterval(deleteLastDigit, 150);
+        }
+
+        function stopDelete() {
+            clearInterval(deleteInterval);
+        }
+
+        function deleteLastDigit() {
             if (phoneNumber.length > 0) {
                 phoneNumber = phoneNumber.slice(0, -1);
                 updateDisplay();
             }
-        });
+        }
 
         callButton.addEventListener('click', () => {
             if (phoneNumber) {
-                const formattedNumber = '+91' + phoneNumber.replace(/\D/g, '');
-                window.location.href = `tel:${formattedNumber}`;
+                window.location.href = `tel:${phoneNumber}`; // Remove +91 prefix
                 
                 // Start the call timer and show popup after a delay
                 callStartTime = new Date();
