@@ -250,6 +250,21 @@ document.addEventListener('DOMContentLoaded', function() {
             return dateTimeB - dateTimeA;
         });
 
+        // Update the table header to include the Actions column for Interested and Callback
+        const tableHeader = document.querySelector('.call-details-table thead tr');
+        if (status === 'Interested' || status === 'Callback') {
+            if (!tableHeader.querySelector('th:last-child') || tableHeader.querySelector('th:last-child').textContent !== 'Actions') {
+                const actionsHeader = document.createElement('th');
+                actionsHeader.textContent = 'Actions';
+                tableHeader.appendChild(actionsHeader);
+            }
+        } else {
+            const lastHeader = tableHeader.querySelector('th:last-child');
+            if (lastHeader && lastHeader.textContent === 'Actions') {
+                tableHeader.removeChild(lastHeader);
+            }
+        }
+
         filteredCalls.forEach(call => {
             const row = document.createElement('tr');
             const [date, time] = call.dateTime.split(' ');
@@ -263,7 +278,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 <td>${formatTime(time)}</td>
             `;
 
-            if (status === 'Callback' || status === 'Interested') {
+            if (status === 'Interested' || status === 'Callback') {
                 rowContent += `
                     <td>
                         <button onclick="window.openWhatsApp('${call.number}')" class="btn btn-sm btn-success">WhatsApp</button>
@@ -280,19 +295,14 @@ document.addEventListener('DOMContentLoaded', function() {
         callDetailsCard.dataset.currentStatus = status;
         document.querySelector('.call-details-card h2').textContent = `${status} Call Details`;
 
-        // Update the table header to include or exclude the Actions column
-        const tableHeader = document.querySelector('.call-details-table thead tr');
-        if (status === 'Callback' || status === 'Interested') {
-            if (!tableHeader.querySelector('th:last-child')) {
-                const actionsHeader = document.createElement('th');
-                actionsHeader.textContent = 'Actions';
-                tableHeader.appendChild(actionsHeader);
-            }
+        // Ensure scroll is always visible for Interested and Callback
+        const tableResponsive = document.querySelector('.table-responsive');
+        if (status === 'Interested' || status === 'Callback') {
+            tableResponsive.style.overflowY = 'scroll';
+            tableResponsive.style.maxHeight = '400px'; // Adjust this value as needed
         } else {
-            const lastHeader = tableHeader.querySelector('th:last-child');
-            if (lastHeader && lastHeader.textContent === 'Actions') {
-                tableHeader.removeChild(lastHeader);
-            }
+            tableResponsive.style.overflowY = 'auto';
+            tableResponsive.style.maxHeight = 'none';
         }
     }
 
