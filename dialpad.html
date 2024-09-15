@@ -377,6 +377,10 @@
             });
         });
 
+        // Single click delete functionality
+        deleteButton.addEventListener('click', deleteLastDigit);
+
+        // Long press delete functionality
         let deleteInterval;
 
         deleteButton.addEventListener('mousedown', startDelete);
